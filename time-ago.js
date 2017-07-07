@@ -1,22 +1,26 @@
-/* Time Ago
+/* time-ago
  * ----------
- * Small, crude tool for estimating how it has been since some Date.
- * Allows users to customize the output String's formatting as well
- * as the buckets in which to lump dates.
+ * Small, crude tool for estimating how it has been since some date.
+ * Adds two new methods to the Date prototype, one constructs the
+ * time-ago string and the other allows users to customize the output
+ * String's formatting as well as the buckets in which to lump dates.
  * 
- * Limitations: breakpoints (and names) must be in increasing order
+ * Limitations: break points (and names) must be in increasing order
+ *              by default, mo = 31 days, yr = 365.25 days
+ *
+ * Like I said ... crude
  * 
  * @author Nguyen Phan
  * @license MIT
  */
 
-'use strict'
-
 (function () {
+    'use strict'
+    
     var options = {
-            breakpoints: [6e+4,3.6e+6,8.64e+7,6.048e+8,2.6784e+9,3.15576e+10],
+            breakpoints: [6e+4, 3.6e+6, 8.64e+7, 6.048e+8, 2.6784e+9, 3.15576e+10],
             names: ["min", "hr", "day", "wk", "mo", "yr"],
-            prefix: "< a ",
+            prefix: "< 1 ",
             suffix: " ago",
             default: "> 1 yr ago"
         }
@@ -30,6 +34,10 @@
     Date.prototype.timeAgo = function () {
         var diff = Date.now() - this.getTime();
         var len  = options.breakpoints.length;
+        
+        if (diff < 0) {
+            return "Date is in the future";
+        }
         
         for (var i = 0; i < len; i++) {
             if (diff <= options.breakpoints[i]) {

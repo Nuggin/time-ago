@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>time-ago test</title>
+    <style>
+        h3 {
+            text-transform: uppercase;
+        }
+        
+        input {
+            margin-bottom: 10px;
+        }
+        
+        input[type="text"] {
+            min-width: 200px;
+            padding-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Time-ago tester</h3>
+    <div>
+        <input type="button" id="changeConfig" onclick="changeConfiguration()" value="Change Configuration:"></input>
+        <span id="currentConfig">Default</span>
+    </div>
+    
+    <div>
+        <input type="text"   id="parsableDate" placeholder="Type a parsable date string"></input>
+        <input type="button" id="submitButton" onclick="displayTimeAgo()" value="Submit"></input>
+        <p>
+            <strong>Input Date:&nbsp;</strong>
+            <span id="input"></span>
+        <p>
+            <strong>Output:&nbsp;</strong>
+            <span id="output"></span>
+        </p>
+    </div>
+    
+    <script src="time-ago.js"></script>
+    <script>
+        var default_config = {
+            breakpoints: [6e+4, 3.6e+6, 8.64e+7, 6.048e+8, 2.6784e+9, 3.15576e+10],
+            names: ["min", "hr", "day", "wk", "mo", "yr"],
+            prefix: "< 1 ",
+            suffix: " ago",
+            default: "> 1 yr ago"
+        }
+        
+        var custom_config = {
+            breakpoints: [6e+4, 3.6e+6, 8.64e+7, 1.728e+8, 6.048e+8, 2.6784e+9, 3.15576e+10],
+            names: ["this minute", "this hour", "today", "yesterday", "this week", "this month", "this year"], 
+            prefix: "",
+            suffix: "",
+            default: "more than a year ago"
+        }
+        
+        var isCustom = false;
+        
+        var changeConfiguration = function () {
+            var inputEl =  document.getElementById("input");
+            var outputEl = document.getElementById("output");
+            
+            isCustom = !isCustom;
+            document.getElementById("currentConfig").innerHTML = (isCustom) ? "Custom" : "Default";
+            (new Date()).timeAgoConfig( (isCustom) ? custom_config : default_config);
+            
+            if (inputEl.innerHTML) {
+                outputEl.innerHTML = (new Date(inputEl.innerHTML)).timeAgo();
+            }
+        }
+        
+        var displayTimeAgo = function () {
+            var dateEl =   document.getElementById("parsableDate");
+            var outputEl = document.getElementById("output");
+            var inputEl =  document.getElementById("input");
+            var date;
+            
+            // Source: https://stackoverflow.com/a/1353710
+            if (isNaN(Date.parse(dateEl.value))) {
+                inputEl.innerHTML = (dateEl.value || "[empty]") + " is not a parsable date string. Try Again";
+            } else {
+                date = new Date(dateEl.value);
+                inputEl.innerHTML = date.toString();
+                outputEl.innerHTML = date.timeAgo();
+            }
+        };
+    </script>
+</body>
+</html>
